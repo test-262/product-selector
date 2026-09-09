@@ -1,137 +1,624 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CBP Systems Finder (Mini)</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202020">
+  <title>QUIKRETE Project Selector</title>
+  <style>
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; color: var(--ink); }
+button, select, a { font: inherit; }
+a { color: inherit; }
+.topbar, .brand { display: flex; align-items: center; justify-content: space-between; }
+.brand { justify-content: flex-start; min-width: 0; }
+.brand-mark { flex-shrink: 0; line-height: 1; }
+h1, h2, h3, h4, p { margin: 0; }
+.brand-copy p, .selector-heading > span, .field-help, .results-top p { color: var(--muted); }
+.eyebrow { display: block; text-transform: uppercase; font-weight: 700; }
+.selector-panel { background: white; }
+.selector-grid, .cards, .doc-links { display: grid; }
+.field { min-width: 0; }
+.field label { display: flex; gap: 8px; font-weight: 700; }
+.step { display: inline-grid; place-items: center; width: 22px; height: 22px; }
+select { width: 100%; color: var(--ink); background: white; }
+select:disabled { cursor: not-allowed; }
+.reset-btn { cursor: pointer; font-weight: 700; color: var(--ink); }
+.reset-btn:hover { background: #eee; }
+.results-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.selection-summary { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.card { display: flex; flex-direction: column; }
+.tier-row { display: flex; align-items: center; justify-content: space-between; }
+.tier-pill { text-transform: uppercase; font-weight: 800; }
+.product-code { color: var(--muted); }
+.card-notes { flex: 1; }
+.doc-links { margin-top: auto; }
+.doc-link { display: flex; align-items: center; text-decoration: none; border: 1px solid; font-weight: 700; }
+.empty-state { display: grid; place-items: center; text-align: center; color: var(--muted); }
+.empty-state strong { display: block; color: var(--ink); }
+.callout { display: block; }
+[hidden] { display: none !important; }
+
+  :root {
+    --ink: #202020;
+    --ink-2: #383838;
+    --muted: #666666;
+    --muted-2: #737373;
+    --line: #ddddda;
+    --surface: #ffffff;
+    --surface-2: #f5f5f2;
+    --yellow: #ffcd00;
+    --yellow-dark: #927500;
+    --radius: 8px;
+    --shadow: none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  html { background: #f3f3f0; }
+  body { background: #f3f3f0; border-top: 6px solid var(--yellow); }
+  button, select, a { touch-action: manipulation; }
+  .shell {
+    width: min(1440px, calc(100% - 80px));
+    padding: 0 0 32px;
+    display: grid;
+    grid-template-columns: 292px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .topbar {
+    grid-column: 1 / -1;
+    min-height: 102px;
+    margin: 0;
+    border-bottom: 1px solid #d5d5d0;
+    gap: 20px;
+  }
+  .brand { gap: 22px; }
+  .brand-mark {
+    color: #ffcd00;
+    background: #202020;
+    border: none;
+    border-radius: 2px;
+    padding: 14px 15px 12px;
+    font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: -.035em;
+    box-shadow: none;
+  }
+  .brand-copy { border-left: 1px solid #c9c9c5; padding-left: 22px; }
+  .brand-copy h1 { font-size: 20px; font-weight: 700; letter-spacing: -.025em; }
+  .brand-copy p { margin-top: 6px; font-size: 14px; }
+  .status-chip {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #555;
+  }
+  .status-dot { display: none; }
+  .hero {
+    grid-column: 1 / -1;
+    background: transparent;
+    color: var(--ink);
+    border-radius: 0;
+    padding: 12px 0 8px;
+    margin: 0;
+    overflow: visible;
+  }
+  .hero::after { display: none; }
+  .eyebrow {
+    color: #62625b;
+    font-size: 12px;
+    letter-spacing: .14em;
+    margin-bottom: 12px;
+  }
+  .hero h2 {
+    max-width: none;
+    font-size: clamp(28px, 3.2vw, 42px);
+    line-height: 1.14;
+    font-weight: 750;
+    letter-spacing: -.04em;
+  }
+  .hero p {
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 16px;
+    max-width: 800px;
+    line-height: 1.55;
+  }
+  .selector-panel {
+    margin: 0;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--ink);
+    border-radius: 6px;
+    position: sticky;
+    top: 24px;
+  }
+  .selector-heading { display: block; margin-bottom: 26px; }
+  .selector-heading h3 { font-size: 18px; }
+  .selector-heading > span { display: block; margin-top: 7px; font-size: 14px; }
+  .selector-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .field label { align-items: start; font-size: 14px; line-height: 1.55; margin-bottom: 10px; }
+  .step {
+    flex: 0 0 22px;
+    border-radius: 3px;
+    font-size: 12px;
+    background: #efefeb;
+  }
+  select {
+    min-height: 50px;
+    padding: 10px 30px 10px 10px;
+    font-size: 16px;
+    font-weight: 400;
+    border: 1px solid #b8b8b2;
+    border-radius: 4px;
+    line-height: 1.35;
+  }
+  select:disabled { color: #73736f; background: #f5f5f2; }
+  select:focus { border-color: #665200; box-shadow: 0 0 0 3px #ffcd0060; }
+  .field-help { font-size: 14px; line-height: 1.55; margin-top: 10px; }
+  .reset-btn {
+    grid-column: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 44px;
+    font-size: 14px;
+    background: #fafaf8;
+  }
+  .results-panel {
+    background: transparent;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    min-width: 0;
+    min-height: 0;
+  }
+  .results-top { min-height: 58px; margin-bottom: 18px; gap: 16px; }
+  .results-top h3 { font-size: 20px; line-height: 1.3; }
+  .results-top p { font-size: 14px; line-height: 1.5; margin-top: 6px; }
+  .selection-summary { max-width: 50%; }
+  .summary-chip {
+    border: 1px solid #d4d4ce;
+    background: #ebebe6;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 6px 8px;
+  }
+  .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .card {
+    --tier: #53534f;
+    background: #fff;
+    border: 1px solid #d7d7d1;
+    border-top: 4px solid #b3b3aa;
+    border-radius: 6px;
+    padding: 22px 20px 20px;
+    box-shadow: none;
+    min-height: 350px;
+  }
+  .card--better { --tier: #242424; border-top-color: #454540; }
+  .card--best {
+    --tier: #202020;
+    background: #fff;
+    border-color: #c8bc80;
+    border-top-color: #ffcd00;
+    box-shadow: none;
+  }
+  .tier-row { gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+  .tier-pill {
+    border-radius: 3px;
+    background: #efefeb;
+    color: #42423c;
+    font-size: 12px;
+    padding: 7px 9px;
+    letter-spacing: .07em;
+  }
+  .card--better .tier-pill { background: #30302d; color: #fff; }
+  .card--best .tier-pill { background: #ffcd00; color: #202020; }
+  .product-code { font-size: 12px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .card h4 { font-size: 21px; line-height: 1.25; letter-spacing: -.03em; overflow-wrap: anywhere; }
+  .card-notes { margin: 16px 0 24px; font-size: 16px; line-height: 1.6; color: #5e5e58; }
+  .doc-links { grid-template-columns: 1fr; gap: 8px; }
+  .doc-link {
+    justify-content: space-between;
+    border-radius: 4px;
+    padding: 12px;
+    min-height: 46px;
+    font-size: 14px;
+    background: #fafaf8;
+    border-color: #d6d6d0;
+  }
+  .doc-link::after { content: '\2197'; font-size: 18px; margin-left: 8px; }
+  .doc-link:hover { background: #f2f2ed; border-color: #555; transform: none; }
+  .card--best .doc-link:first-child { background: #ffcd00; border-color: #ffcd00; }
+  .card--best .doc-link:first-child:hover { background: #edbd00; }
+  .cards:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .empty-state {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    min-height: 350px;
+    padding: 40px;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  .empty-state strong { font-size: 22px; letter-spacing: -.025em; margin-bottom: 10px; }
+  .callout {
+    min-height: 0;
+    text-align: left;
+    border: 1px solid #ddc45a;
+    border-left: 4px solid #ffcd00;
+    background: #fffbee;
+    color: #514b30;
+    padding: 28px;
+  }
+  .callout strong, .callout a { color: #38331e; }
+  .footer-note {
+    grid-column: 1 / -1;
+    margin: 8px 0 0;
+    border-top: 1px solid #d5d5d0;
+    padding-top: 20px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #67675f;
+  }
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #7b6300;
+    outline-offset: 4px;
+  }
+  @media (max-width: 1180px) {
+    .shell { width: calc(100% - 48px); grid-template-columns: 260px minmax(0, 1fr); }
+    .selector-panel { padding: 20px; }
+    .cards { grid-template-columns: 1fr; }
+    .cards:has(> :nth-child(2):last-child) { grid-template-columns: 1fr; }
+    .card { min-height: 0; }
+    .tier-row { margin-bottom: 16px; }
+    .doc-links { grid-template-columns: 1fr 1fr; }
+    .results-top { flex-direction: column; }
+    .selection-summary { max-width: 100%; justify-content: flex-start; }
+  }
+  @media (max-width: 760px) {
+    .shell { width: calc(100% - 32px); grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .topbar { min-height: 90px; align-items: center; }
+    .brand { gap: 12px; }
+    .brand-mark { font-size: 23px; padding: 12px 10px 10px; }
+    .brand-copy { padding-left: 12px; }
+    .brand-copy h1 { font-size: 18px; }
+    .brand-copy p { display: none; }
+    .status-chip { display: none; }
+    .hero { padding: 4px 0; }
+    .hero h2 { font-size: 32px; }
+    .hero p { margin-top: 10px; }
+    .selector-panel { position: static; padding: 20px; }
+    .selector-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .reset-btn { grid-column: 1 / -1; }
+    .selector-heading { margin-bottom: 20px; }
+    .results-top { min-height: 0; }
+    .empty-state { min-height: 230px; padding: 24px; }
+  }
+  @media (max-width: 480px) {
+    .selector-grid { grid-template-columns: minmax(0, 1fr); }
+    .card { padding: 20px; }
+    .doc-links { grid-template-columns: minmax(0, 1fr); }
+    .hero h2 { font-size: 29px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="dot"></div>
-      <div>
-        <div class="brandTitle">CBP Systems Finder</div>
-        <div class="brandSub">Mini prototype (methods + docs + keyword search)</div>
-      </div>
-    </div>
-
-    <div class="topActions">
-      <input id="q" class="search" type="search" placeholder="Search keywords… (ex: exterior porcelain concrete)" />
-      <button id="resetBtn" class="btn ghost">Reset</button>
-    </div>
-  </header>
-
-  <main class="layout">
-    <aside class="sidebar">
-      <section class="panel">
-        <div class="panelTitle">Installation Category</div>
-
-        <div class="radioList" id="catList">
-          <!-- injected -->
-        </div>
-      </section>
-
-      <section class="panel">
-  <div class="panelRow">
-    <div class="panelTitle">Build Your Installation</div>
-    <button id="resetSideBtn" class="linkBtn">RESET</button>
-  </div>
-
-  <div class="field">
-    <label for="mTile">Tile</label>
-    <select id="mTile">
-      <option value="">Any</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="mOver">Over</label>
-    <select id="mOver">
-      <option value="">Any</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="mOptions">Options</label>
-    <select id="mOptions" multiple size="5"></select>
-    <div class="hint">Hold Ctrl (Windows) / Cmd (Mac) to select multiple.</div>
-  </div>
-
-  <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;opacity:.7" />
-
-  <div class="panelTitle">Advanced Search</div>
-
-  <div class="field">
-    <label for="application">Application</label>
-    <select id="application">
-      <option value="">Any</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="substrate">Substrate</label>
-    <select id="substrate">
-      <option value="">Any</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label for="tileType">Tile Type</label>
-    <select id="tileType">
-      <option value="">Any</option>
-    </select>
-  </div>
-
-  <div class="hint">
-    Tip: pick <b>Porcelain tile</b> + <b>Over on-ground concrete</b> + <b>Optional membrane</b>
-  </div>
-</section>
-
-      <section class="panel">
-        <div class="panelTitle">Industry Methods</div>
-        <div class="hint">
-          This demo treats “Industry Method” as a label (TCNA/etc). Later you can map real codes and attach official PDFs.
-        </div>
-      </section>
-    </aside>
-
-    <section class="content">
-      <div class="contentHead">
-        <h1>Results</h1>
-        <div class="meta">
-          <span id="count">0</span> matching systems
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">QUIKRETE</div>
+        <div class="brand-copy">
+          <h1>Project Selector</h1>
+          <p>Product guidance by application and depth</p>
         </div>
       </div>
-
-      <div id="results" class="cards"></div>
-
-      <div id="empty" class="empty hidden">
-        <div class="emptyTitle">No matches</div>
-        <div class="emptySub">Try clearing filters or searching different keywords.</div>
+      <div class="status-chip">Technical reference</div>
+    </header>
+    <section class="hero" aria-labelledby="introTitle">
+      <div class="eyebrow">Project planning / Material selection</div>
+      <h2 id="introTitle">The right product for your project.</h2>
+      <p>Choose your application and depth to compare materials and access technical documents.</p>
+    </section>
+    <section class="selector-panel" aria-labelledby="detailsTitle">
+      <div class="selector-heading">
+        <h3 id="detailsTitle">Project details</h3>
+        <span>Select your application and depth</span>
+      </div>
+      <div class="selector-grid">
+        <div class="field">
+          <label for="projectType"><span class="step">1</span> Project type</label>
+          <select id="projectType" aria-describedby="projectHelp">
+            <option value="">Select a project type</option>
+            <option value="concrete">Concrete Installation</option>
+            <option value="brick">Brick Installation</option>
+            <option value="CMU">Concrete Block Installation</option>
+            <option value="mortar-joint">Mortar Joint Repair</option>
+            <option value="crack">Concrete Crack Repair</option>
+            <option value="surface">Concrete Repair (spalls / surface)</option>
+            <option value="leveler">Floor Leveling</option>
+          </select>
+          <p class="field-help" id="projectHelp">Choose the application that best matches the job.</p>
+        </div>
+        <div class="field">
+          <label for="repairSize"><span class="step">2</span> Deepest application depth</label>
+          <select id="repairSize" disabled aria-describedby="depthHelp">
+            <option value="">Select a depth</option>
+            <option value="0.25">Up to 1/4&quot;</option>
+            <option value="0.375">Up to 3/8&quot;</option>
+            <option value="0.5">Up to 1/2&quot;</option>
+            <option value="1">Up to 1&quot;</option>
+            <option value="2">Up to 2&quot;</option>
+            <option value="over2">Over 2&quot;</option>
+          </select>
+          <p class="field-help" id="depthHelp">Use the deepest point of the placement or repair.</p>
+        </div>
+        <button class="reset-btn" id="resetBtn" type="button">Reset</button>
       </div>
     </section>
-  </main>
-
-  <!-- Modal -->
-  <div id="modalBackdrop" class="modalBackdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal">
-      <div class="modalHead">
+    <section class="results-panel" aria-labelledby="resultsTitle">
+      <div class="results-top">
         <div>
-          <div id="modalTitle" class="modalTitle">Documents</div>
-          <div id="modalSub" class="modalSub"></div>
+          <h3 id="resultsTitle">Recommended materials</h3>
+          <p id="resultSubtext" role="status">Select a project type to begin.</p>
         </div>
-        <button id="closeModal" class="btn ghost">Close</button>
+        <div class="selection-summary" id="selectionSummary" aria-label="Current selection" hidden></div>
       </div>
+      <div id="cardsContainer" class="cards" aria-live="polite"></div>
+      <div id="emptyState" class="empty-state" aria-live="polite"></div>
+    </section>
+    <footer class="footer-note">
+      Before use, review the current technical data and safety documents for surface preparation,
+      application limits and jobsite requirements.
+    </footer>
+  </main>
+  <script>
 
-      <div id="modalBody" class="modalBody"></div>
+    // Product data and selection rules retained from the supplied selector.
+    // This visual update does not constitute a technical review of these rules.
+    const PDF = 'https://www.quikrete.com/pdfs/';
+    function product(name, code, notes, datasheet, sds) {
+      return {
+        name: 'QUIKRETEÂ® ' + name, code, notes,
+        datasheet: datasheet ? PDF + datasheet : '',
+        sds: sds ? PDF + sds : ''
+      };
+    }
+    const PRODUCTS = {
+      crackSeal: product('Concrete Crack Seal', '#8640',
+        'Flowable crack sealer for hairline to small cracks in concrete slabs.',
+        'data_sheet-concrete%20crack%20seal%208640-10%20-15.pdf',
+        'sds-a11-acrylic-crack-seals.pdf'),
+      polymerCrack: product('Advanced Polymer Concrete Crack Sealant', '#8660',
+        'Flexible, long-lasting sealant for active or moving cracks up to 1/2".',
+        'data_sheet-advanced%20polymer%20concrete%20crack%20sealant%20862017.pdf',
+        'sds-j7-advanced-polymer-concrete-crack-&-mortar-joint.pdf'),
+      epoxy: product('Epoxy Concrete Repair', 'Epoxy',
+        'Two-component epoxy for maximum bond and chemical resistance in narrow cracks.',
+        'data-sheet-epoxy-concrete-%20repair-8640-29.pdf',
+        'sds-f5-epoxy-concrete-repair-parts-a-b.pdf'),
+      mason: product('Mason Mix Type S', '#1136',
+        'Higher strength mix for structural or load-bearing masonry joints.',
+        'data_sheet-mason%20mix%201136.pdf', 'sds-c4-masonry-mortars.pdf'),
+      polymerMortar: product('Advanced Polymer Mortar Joint Sealant', '#8620-18',
+        'High performance caulk-style material that seals and waterproofs joints.',
+        'data_sheet-advanced%20polymer%20mortar%20joint%20sealant%20862018.pdf',
+        'sds-j7b-advanced-polymer-concrete-crack-&-mortar-joint.pdf'),
+      mortarRepair: product('Mortar Repair', '#8620-09',
+        'Caulk-style repair for small mortar joint cracks and minor tuckpointing.',
+        'data_sheet-mortar%20repair%208620.pdf', 'sds-a12-repair-tubes.pdf'),
+      mortarMix: product('Mortar Mix', '#1102',
+        'Cement and sand mix for joints for more durable repairs; shape and tool to match existing joints.',
+        'data_sheet-mortar%20mix%201102.pdf', 'sds-c4-masonry-mortars.pdf'),
+      sand: product('Sand Topping Mix', '#1103',
+        'Use for concrete repair of steps, slabs and any concrete horizontal surface between 3/8" to 2" thick.',
+        'data_sheet-sand-topping%20mix%201103.pdf', 'sds-c9-general-repair-products.pdf'),
+      quick: product('Quick Setting Cement', '#1240',
+        'Quick setting patch for spalls and shallow repairs from feather edge to 2" deep.',
+        'data_sheet-quick-setting%20cement%201240.pdf', 'sds-c20%20fast-setting-products.pdf'),
+      structural: product('Polymer Modified Structural Repair', '#1241',
+        'Quick setting polymer modified patch for spalls and shallow repairs from feather edge to 2" deep.',
+        'polymer-modified-structural-repair-1241-25.pdf', 'sds-c17-pm-structural-repair.pdf'),
+      vinyl: product('Vinyl Concrete Patcher', '#1133',
+        'General-purpose patch for spalls and shallow repairs up to 1/4" deep.',
+        'data_sheet-vinyl%20concrete%20patcher%201133.pdf', 'sds-c13-polymer-modified-repair-products.pdf'),
+      repairMortar: product('Fast Set Repair Mortar', '#1241',
+        'General-purpose fast setting patch for spalls and shallow repairs up to 2" deep.'),
+      fastConcrete: product('FastSetâ¢ Concrete Mix', '#1004',
+        'Fast-setting, high-strength concrete where downtime must be minimized.',
+        'data_sheet-fast%20setting%20concrete%20mix%201004-50.pdf', 'sds-c6-fast-setting-products.pdf'),
+      concrete: product('High Strength Concrete Mix', '#1101',
+        '4000 PSI concrete mix suitable for interior and exterior applications that is a pre-blended mixture of sand, cement and gravel.',
+        'data_sheet-concrete%20mix%201101.pdf', 'sds-c1-concretes.pdf'),
+      concrete5000: product('5000', '#1007',
+        '5000 PSI high early strength gain concrete mix that is a pre-blended mixture of sand, cement and gravel.',
+        'data_sheet-quikrete%205000%201007.pdf', 'sds-c1-concretes.pdf'),
+      qmax: product('Q Max Pro', '#1004',
+        '6500 PSI concrete that is air entrained and also contains a corrosion inhibitor and is a pre-blended mixture of sand, cement and gravel.',
+        'data_sheet-qmax-pro-1004-81.pdf', 'sds-c6-fast-setting-products.pdf'),
+      leveler: product('Self Leveling Floor Resurfacer', '#1249-50',
+        'Feather edge to 5/8" thick. Not a finished flooring surface.',
+        'data_sheet-self-leveling%20floor%20resurfacer%201249-50%20-51.pdf',
+        'sds-c8-self-leveling-underlayments.pdf'),
+      fastLeveler: product('Fast Setting Self Leveling Floor Resurfacer', '#1249-51',
+        'Feather edge to 1.5" thick. Can be used as a finished flooring surface.',
+        'data_sheet-self-leveling%20floor%20resurfacer%201249-50%20-51.pdf',
+        'sds-c8-self-leveling-underlayments.pdf'),
+      recap: product('Re-Cap', '#1131',
+        'Resurfacer designed to provide a new, durable wear surface over worn/scaled concrete.',
+        'datasheet-concrete-resurfacer_1131-47.pdf', 'sds-c6-fast-setting-products.pdf')
+    };
 
-      <div class="modalFoot">
-        <button id="modalDownload" class="btn primary">Download Package</button>
-      </div>
-    </div>
-  </div>
+    const recommendations = {};
+    function applyCombo(projects, depths, combo) {
+      projects.forEach(project => depths.forEach(depth => {
+        recommendations[`${project}|${depth}`] = combo;
+      }));
+    }
+    function assistance(projects, depths) {
+      applyCombo(projects, depths, { assistance: true });
+    }
+    const P = PRODUCTS;
+    applyCombo(['mortar-joint'], ['0.25', '0.375'], {
+      good: P.mason, better: P.polymerMortar, best: P.mortarRepair
+    });
+    applyCombo(['mortar-joint'], ['0.5'], {
+      good: { ...P.mortarRepair, code: '#8620', notes:
+        'Caulk-style repair for small mortar joint cracks and minor tuckpointing. Maximum 3/8" application at a time. Another layer can be applied after 4 hours.' },
+      better: P.mortarMix, best: P.mason
+    });
+    assistance(['mortar-joint'], ['1', '2', 'over2']);
+    applyCombo(['crack'], ['0.25', '0.375', '0.5'], {
+      good: P.crackSeal, better: P.polymerCrack, best: P.epoxy
+    });
+    applyCombo(['crack'], ['1', '2'], {
+      good: P.sand, better: P.quick, best: P.structural
+    });
+    assistance(['crack'], ['over2']);
+    applyCombo(['surface'], ['0.25'], {
+      good: P.vinyl, better: P.quick, best: P.structural
+    });
+    applyCombo(['surface'], ['0.375'], {
+      good: P.repairMortar, better: P.quick, best: P.structural
+    });
+    applyCombo(['surface'], ['0.5', '1', '2'], {
+      good: P.sand, better: P.quick, best: P.structural
+    });
+    applyCombo(['surface'], ['over2'], {
+      good: { ...P.structural, notes: 'Repairs over 2" deep should be done in 2" lifts with ~4 hours between lifts.' },
+      better: P.fastConcrete,
+      best: { ...P.concrete, name: 'QUIKRETEÂ® High Strengthâ¢ Concrete Mix',
+        notes: 'Standard 4,000 psi mix for full-depth slab and structural repairs.' }
+    });
+    applyCombo(['leveler'], ['0.25', '0.375', '0.5'], {
+      good: P.leveler, better: P.fastLeveler, best: P.recap
+    });
+    const sandLeveler = { ...P.sand, notes: 'Used for topping/repairing horizontal surfaces up to 2" thick.' };
+    applyCombo(['leveler'], ['1'], {
+      good: sandLeveler,
+      better: { ...P.recap, code: '#1131-47', notes: 'For ~1" total thickness, apply as two ~1/2" lifts.' },
+      best: P.fastLeveler
+    });
+    applyCombo(['leveler'], ['2'], {
+      good: sandLeveler, better: sandLeveler, best: P.fastLeveler
+    });
+    assistance(['leveler'], ['over2']);
+    assistance(['concrete'], ['0.25', '0.375', '0.5', '1']);
+    applyCombo(['concrete'], ['2', 'over2'], {
+      good: P.concrete, better: P.concrete5000, best: P.qmax
+    });
+    applyCombo(['CMU', 'brick'], ['0.25', '0.375', '0.5', '1'], {
+      better: { ...P.mortarMix, notes: 'Cement and sand mix only to be used above grade and in non-structural applications' },
+      best: { ...P.mason, notes: 'Higher strength mix with the addition of lime for structural or load-bearing masonry joints and can also be used below grade.' }
+    });
+    assistance(['CMU', 'brick'], ['2', 'over2']);
 
-  <script src="./app.js" defer></script>
+    const projectSelect = document.getElementById('projectType');
+    const sizeSelect = document.getElementById('repairSize');
+    const cardsContainer = document.getElementById('cardsContainer');
+    const emptyState = document.getElementById('emptyState');
+    const selectionSummary = document.getElementById('selectionSummary');
+    const resultSubtext = document.getElementById('resultSubtext');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+    function selectedText(select) {
+      return select.options[select.selectedIndex]?.text || '';
+    }
+    function updateSummary() {
+      selectionSummary.replaceChildren();
+      [projectSelect, sizeSelect].forEach(select => {
+        if (select.value) selectionSummary.appendChild(element('span', 'summary-chip', selectedText(select)));
+      });
+      selectionSummary.hidden = !selectionSummary.childElementCount;
+    }
+    function showEmpty(title, message, needsAssistance = false) {
+      emptyState.hidden = false;
+      emptyState.className = needsAssistance ? 'empty-state callout' : 'empty-state';
+      const content = element('div');
+      content.appendChild(element('strong', '', title));
+      content.appendChild(element('p', '', message));
+      if (needsAssistance) {
+        const link = element('a', '', '1-800-282-5828');
+        link.href = 'tel:18002825828';
+        content.appendChild(link);
+      }
+      emptyState.replaceChildren(content);
+    }
+    function makeDocLink(label, href, productName) {
+      const link = element('a', 'doc-link', label);
+      link.href = href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', `${label} for ${productName} (opens in a new tab)`);
+      return link;
+    }
+    function renderRecommendations() {
+      sizeSelect.disabled = !projectSelect.value;
+      if (!projectSelect.value) sizeSelect.value = '';
+      updateSummary();
+      cardsContainer.replaceChildren();
+      if (!projectSelect.value) {
+        showEmpty('Start with your project details', 'Select a project type, then choose the deepest application depth.');
+        resultSubtext.textContent = 'Select a project type to begin.';
+        return;
+      }
+      if (!sizeSelect.value) {
+        showEmpty('Choose your application depth', 'Choose the deepest application depth to see recommendations.');
+        resultSubtext.textContent = 'Now choose the deepest application depth.';
+        return;
+      }
+      const combo = recommendations[`${projectSelect.value}|${sizeSelect.value}`];
+      if (!combo || combo.assistance) {
+        showEmpty('Further assistance required.', 'Please call Technical Services at:', true);
+        resultSubtext.textContent = 'This application requires additional guidance.';
+        return;
+      }
+      emptyState.hidden = true;
+      resultSubtext.textContent = 'Compare product options for your application.';
+      ['good', 'better', 'best'].forEach(tier => {
+        const data = combo[tier];
+        if (!data) return;
+        const card = element('article', `card card--${tier}`);
+        const row = element('div', 'tier-row');
+        row.appendChild(element('span', 'tier-pill', tier[0].toUpperCase() + tier.slice(1)));
+        row.appendChild(element('span', 'product-code', data.code || ''));
+        card.appendChild(row);
+        card.appendChild(element('h4', '', data.name));
+        card.appendChild(element('div', 'card-notes', data.notes || ''));
+        if (data.datasheet || data.sds) {
+          const links = element('div', 'doc-links');
+          if (data.datasheet) links.appendChild(makeDocLink('Technical Data', data.datasheet, data.name));
+          if (data.sds) links.appendChild(makeDocLink('Safety Data', data.sds, data.name));
+          card.appendChild(links);
+        }
+        cardsContainer.appendChild(card);
+      });
+    }
+    projectSelect.addEventListener('change', renderRecommendations);
+    sizeSelect.addEventListener('change', renderRecommendations);
+    resetBtn.addEventListener('click', () => {
+      projectSelect.value = '';
+      sizeSelect.value = '';
+      renderRecommendations();
+      projectSelect.focus();
+    });
+    renderRecommendations();
+  </script>
 </body>
 </html>
