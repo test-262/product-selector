@@ -311,6 +311,140 @@ select:disabled { cursor: not-allowed; }
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
 
+
+  /* Branded visual refresh */
+  :root { --yellow: #ffcc00; --ink: #191919; --muted: #5c5c56; }
+  html, body { background: #f4f5f6; }
+  body { border-top: 7px solid #ffcc00; }
+  .topbar { border-bottom: 0; }
+  .brand-mark {
+    background: #ffcc00;
+    color: #171717;
+    border-bottom: 4px solid #171717;
+    padding: 14px 15px 10px;
+  }
+  .brand-copy { border-left-color: #cecece; }
+  .status-chip { color: #414141; font-weight: 700; }
+  .hero {
+    background: #191919;
+    color: #fff;
+    padding: 28px 32px 30px;
+    border-radius: 10px;
+    border-left: 7px solid #ffcc00;
+    box-shadow: 0 8px 24px #0000000a;
+  }
+  .eyebrow { color: #ffcc00; letter-spacing: .12em; }
+  .hero h2 { color: #fff; font-size: clamp(28px, 3vw, 40px); }
+  .hero p { color: #d2d2d2; max-width: 740px; }
+  .selector-panel {
+    border: 1px solid #dededb;
+    border-top: 5px solid #ffcc00;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 5px 18px #00000005;
+  }
+  .selector-heading { padding-bottom: 20px; border-bottom: 1px solid #e6e6e2; margin-bottom: 22px; }
+  .selector-heading h3 { font-size: 20px; }
+  .step { background: #ffcc00; color: #191919; border-radius: 5px; font-weight: 800; }
+  select { border-radius: 6px; border-color: #b9b9b3; }
+  select:hover:enabled { border-color: #575750; }
+  .reset-btn {
+    background: #191919;
+    color: #fff;
+    border-color: #191919;
+    border-radius: 6px;
+  }
+  .reset-btn:hover { background: #353535; border-color: #353535; }
+  .results-top { padding-top: 3px; }
+  .results-top h3::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 20px;
+    background: #ffcc00;
+    margin-right: 10px;
+    vertical-align: -3px;
+    border-radius: 1px;
+  }
+  .summary-chip { background: #fff6cf; border-color: #e1ce7f; color: #494125; }
+  .cards { gap: 18px; }
+  .card {
+    padding: 0 22px 22px;
+    border: 1px solid #d9dad7;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 5px 16px #16161606;
+  }
+  .tier-row {
+    margin: 0 -22px 22px;
+    padding: 15px 22px;
+    background: #fff5cc;
+    border-bottom: 1px solid #eee1ac;
+    min-height: 60px;
+  }
+  .tier-pill { background: transparent; color: #393321; padding: 0; font-size: 13px; }
+  .product-code { color: #5f5944; font-size: 13px; }
+  .card--better .tier-row { background: #242424; border-color: #242424; }
+  .card--better .tier-pill { background: transparent; color: #ffcc00; }
+  .card--better .product-code { color: #e2e2df; }
+  .card--best { border-color: #d7b12e; box-shadow: 0 5px 18px #9b79000b; }
+  .card--best .tier-row { background: #ffcc00; border-color: #e6b800; }
+  .card--best .tier-pill { background: transparent; color: #191919; }
+  .card--best .product-code { color: #433800; }
+  .card h4 { font-size: 22px; line-height: 1.32; letter-spacing: -.025em; }
+  .card-notes { color: #5b5b55; font-size: 16px; line-height: 1.65; }
+  .doc-link {
+    background: #fff;
+    color: #262626;
+    border: 1px solid #c9c9c2;
+    border-radius: 6px;
+    padding: 13px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .doc-link:first-child { background: #fff5cc; border-color: #dfc764; }
+  .doc-link:hover { background: #f0f0ea; border-color: #77776d; }
+  .doc-link:first-child:hover { background: #ffeb98; border-color: #b49a38; }
+  .card--best .doc-link:first-child { background: #ffcc00; border-color: #d6ac00; }
+  .card--best .doc-link:first-child:hover { background: #efbf00; }
+  /* A CSS arrow avoids iOS substituting a colored emoji glyph. */
+  .doc-link::after {
+    content: '';
+    display: block;
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    margin: 0 3px 0 12px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    background: linear-gradient(135deg, transparent 43%, currentColor 44%, currentColor 56%, transparent 57%);
+  }
+  .empty-state {
+    border-radius: 10px;
+    border-top: 4px solid #ffcc00;
+    background: linear-gradient(180deg, #fffdf4, #fff 65%);
+  }
+  .empty-state strong { color: #262626; }
+  .callout { background: #fff8dc; border: 1px solid #ddc45a; border-left: 5px solid #ffcc00; }
+  .footer-note { border-top-color: #d7d9d8; }
+  @media (max-width: 1180px) {
+    .selector-panel { padding: 20px; }
+  }
+  @media (max-width: 760px) {
+    .hero { padding: 23px 21px 25px; border-left-width: 5px; }
+    .hero h2 { font-size: 30px; }
+    .hero p { font-size: 16px; }
+    .eyebrow { font-size: 12px; line-height: 1.5; }
+    .brand-mark { font-size: 23px; padding: 12px 10px 8px; }
+    .selector-panel { padding: 20px; }
+    .card { padding: 0 20px 20px; }
+    .tier-row { margin: 0 -20px 20px; padding: 15px 20px; }
+    .card h4 { font-size: 23px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .doc-link { transition: none; }
+  }
+
   </style>
 </head>
 <body>
@@ -389,7 +523,7 @@ select:disabled { cursor: not-allowed; }
     const PDF = 'https://www.quikrete.com/pdfs/';
     function product(name, code, notes, datasheet, sds) {
       return {
-        name: 'QUIKRETEÂ® ' + name, code, notes,
+        name: 'QUIKRETE\u00AE ' + name, code, notes,
         datasheet: datasheet ? PDF + datasheet : '',
         sds: sds ? PDF + sds : ''
       };
@@ -434,7 +568,7 @@ select:disabled { cursor: not-allowed; }
         'data_sheet-vinyl%20concrete%20patcher%201133.pdf', 'sds-c13-polymer-modified-repair-products.pdf'),
       repairMortar: product('Fast Set Repair Mortar', '#1241',
         'General-purpose fast setting patch for spalls and shallow repairs up to 2" deep.'),
-      fastConcrete: product('FastSetâ¢ Concrete Mix', '#1004',
+      fastConcrete: product('FastSet\u2122 Concrete Mix', '#1004',
         'Fast-setting, high-strength concrete where downtime must be minimized.',
         'data_sheet-fast%20setting%20concrete%20mix%201004-50.pdf', 'sds-c6-fast-setting-products.pdf'),
       concrete: product('High Strength Concrete Mix', '#1101',
@@ -497,7 +631,7 @@ select:disabled { cursor: not-allowed; }
     applyCombo(['surface'], ['over2'], {
       good: { ...P.structural, notes: 'Repairs over 2" deep should be done in 2" lifts with ~4 hours between lifts.' },
       better: P.fastConcrete,
-      best: { ...P.concrete, name: 'QUIKRETEÂ® High Strengthâ¢ Concrete Mix',
+      best: { ...P.concrete, name: 'QUIKRETE\u00AE High Strength\u2122 Concrete Mix',
         notes: 'Standard 4,000 psi mix for full-depth slab and structural repairs.' }
     });
     applyCombo(['leveler'], ['0.25', '0.375', '0.5'], {
