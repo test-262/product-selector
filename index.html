@@ -477,6 +477,7 @@ select:disabled { cursor: not-allowed; }
             <option value="concrete">Concrete Installation</option>
             <option value="brick">Brick Installation</option>
             <option value="CMU">Concrete Block Installation</option>
+            <option value="veneer-stone">Veneer Stone Installation</option>
             <option value="mortar-joint">Mortar Joint Repair</option>
             <option value="crack">Concrete Crack Repair</option>
             <option value="surface">Concrete Repair (spalls / surface)</option>
@@ -602,6 +603,8 @@ select:disabled { cursor: not-allowed; }
     function assistance(projects, depths) {
       applyCombo(projects, depths, { assistance: true });
     }
+    // Veneer stone product choices are awaiting technical configuration.
+    assistance(['veneer-stone'], ['0.25', '0.375', '0.5', '1', '2', 'over2']);
     const P = PRODUCTS;
     applyCombo(['mortar-joint'], ['0.25', '0.375'], {
       good: P.mason, better: P.polymerMortar, best: P.mortarRepair
